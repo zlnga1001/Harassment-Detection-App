@@ -4,7 +4,7 @@ import { GoogleGenerativeAI } from "@google/generative-ai";
 
 const API_KEY = process.env.GOOGLE_API_KEY;
 if (!API_KEY) {
-    throw new Error('GOOGLE_API_KEY environment variable is not set');
+    throw new Error('Missed GOOGLE_API_KEY environment');
 }
 const genAI = new GoogleGenerativeAI(API_KEY);
 
