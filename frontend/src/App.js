@@ -11,7 +11,7 @@ function App() {
       <h1>Title</h1>
       <div className="bodyContainer">
         <Table setFocusedVideo={setFocusedVideo} setSidebarActive={setSidebarActive} />
-        <Sidebar videoData={focusedVideo} sidebarActive={sidebarActive} />
+        <Sidebar videoData={focusedVideo} sidebarActive={sidebarActive} setSidebarActive={setSidebarActive}/>
       </div>
     </div>
   );

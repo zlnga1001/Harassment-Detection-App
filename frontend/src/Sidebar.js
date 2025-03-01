@@ -1,4 +1,4 @@
-export default function Sidebar({ videoData, sidebarActive }){
+export default function Sidebar({ videoData, sidebarActive, setSidebarActive }){
     return(
         <aside id="sidebar">
             <div id="sidebarContent" style={{ display: sidebarActive ? "block" : "none" }}>
@@ -11,7 +11,7 @@ export default function Sidebar({ videoData, sidebarActive }){
                     <p>No video selected</p>
                 )}
                 <button className="button" onClick={() => sendTelegramMessage(`${videoData.threats} detected at ${videoData.location}`)}>Report!</button>
-                <button className="button" onClick={() => console.log("b")}>Nope</button>
+                <button className="button" onClick={() => setSidebarActive(false)}>Nope</button>
 
             </div>
         </aside>
