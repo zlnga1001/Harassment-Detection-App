@@ -1,59 +1,38 @@
-import os
-import cv2
-import tensorflow as tf  # Add this line
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras.utils import to_categorical
 from hfj_model import create_hfj_model
 
-# Parameters
-SEQUENCE_LENGTH = 20
-IMG_SIZE = (64, 64)
-NUM_CLASSES = 3
-DATASET_PATH = "datasets/"
+# Define Updated Action Classes
+ACTION_CLASSES = [
+    "Fighting", "Threatening Gestures", "Fainting & Collapse", "Harassment"
+]
+NUM_CLASSES = len(ACTION_CLASSES)
+SEQUENCE_LENGTH = 20  # Number of frames in each video
+IMG_SIZE = (64, 64)  # Size of each frame
+NUM_SAMPLES_PER_CLASS = 100  # Number of synthetic "videos" per class
 
-# Load dataset (organized as /datasets/Fighting/, /datasets/Fainting/, /datasets/Running/)
-def load_dataset():
+# Function to Generate Fake Video Data (Simulated Video Sequences)
+def generate_dummy_data():
     X, Y = [], []
-    class_labels = ["Fighting", "Fainting", "Running"]
-
-    for class_index, class_name in enumerate(class_labels):
-        class_path = os.path.join(DATASET_PATH, class_name)
-        videos = os.listdir(class_path)
-
-        for video_name in videos:
-            cap = cv2.VideoCapture(os.path.join(class_path, video_name))
-            frames = []
-            while cap.isOpened():
-                ret, frame = cap.read()
-                if not ret:
-                    break
-                frame = cv2.resize(frame, IMG_SIZE)
-                frame = frame / 255.0
-                frames.append(frame)
-                if len(frames) == SEQUENCE_LENGTH:
-                    X.append(frames)
-                    Y.append(class_index)
-                    frames = []  # Reset
-
-            cap.release()
+    
+    for label in range(NUM_CLASSES):
+        for _ in range(NUM_SAMPLES_PER_CLASS):
+            video_sequence = np.random.rand(SEQUENCE_LENGTH, IMG_SIZE[0], IMG_SIZE[1], 3)  # Random RGB frames
+            X.append(video_sequence)
+            Y.append(label)
 
     X = np.array(X)
-    Y = to_categorical(Y, NUM_CLASSES)
+    Y = to_categorical(Y, NUM_CLASSES)  # Convert labels to one-hot encoding
     return X, Y
 
+# Load Synthetic Data
+X_train, Y_train = generate_dummy_data()
 
-def load_dummy_data():
-    X = np.random.rand(100, 20, 64, 64, 3)  # Fake video sequences
-    Y = np.random.randint(0, 3, 100)  # Random labels (0 = Fighting, 1 = Fainting, 2 = Running)
-    Y = tf.keras.utils.to_categorical(Y, 3)  # One-hot encode labels
-    return X, Y
-
-
-# Train Model
-X_train, Y_train = load_dummy_data()
+# Create & Train Model
 model = create_hfj_model((SEQUENCE_LENGTH, IMG_SIZE[0], IMG_SIZE[1], 3), NUM_CLASSES)
+model.fit(X_train, Y_train, epochs=15, batch_size=8)
 
-
-# Train
-model.fit(X_train, Y_train, epochs=10, batch_size=8)
+# Save Model
 model.save("models/hfj_model.h5")
+print("Training Complete! Model saved as 'models/hfj_model.h5'")

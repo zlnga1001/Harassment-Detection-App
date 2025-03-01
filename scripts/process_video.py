@@ -6,29 +6,23 @@ import time
 from tensorflow.keras.utils import img_to_array
 from tensorflow.keras.models import load_model
 
-# Fix the import issue by adding models/ to path
+# Ensure Python finds the models directory
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'models')))
 
-from hfj_model import create_hfj_model
+from hfj_model import ACTION_CLASSES  # Import action class names
 
-# Parameters
-SEQUENCE_LENGTH = 20  # Number of frames in sequence
-IMG_SIZE = (64, 64)  # Resize frame
-NUM_CLASSES = 3  # Fighting, Fainting, Running
+# Load the trained HFJ model
+SEQUENCE_LENGTH = 20
+IMG_SIZE = (64, 64)
 
-# Check if model exists before loading
-if not os.path.exists("models/hfj_model.h5"):
+# Ensure model exists before loading
+model_path = "models/hfj_model.h5"
+if not os.path.exists(model_path):
     print("Error: Model file 'hfj_model.h5' not found! Train the model first.")
     sys.exit(1)
 
-# Load the entire trained model
-model = load_model("models/hfj_model.h5")
+model = load_model(model_path)  # Load the trained model
 
-
-# Action labels
-actions = ["Fighting", "Fainting", "Running"]
-
-# Function to process video
 def process_video(video_path):
     cap = cv2.VideoCapture(video_path)
     
@@ -60,8 +54,8 @@ def process_video(video_path):
             predicted_action = np.argmax(predictions)
             confidence = predictions[predicted_action]  # Get confidence score
 
-            # Display result
-            print(f"Detected Action: {actions[predicted_action]} (Confidence: {confidence:.2f})")
+            # Display detected action
+            print(f"Detected Action: {ACTION_CLASSES[predicted_action]} (Confidence: {confidence:.2f})")
 
             frames = []  # Reset sequence
 
