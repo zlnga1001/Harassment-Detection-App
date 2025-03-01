@@ -101,7 +101,7 @@ export function Timeline({ events, totalDuration, currentTime = 0 }: TimelinePro
             left: `${hoveredEvent.position.x}px`,
             top: `${hoveredEvent.position.y}px`,
             transform: 'translate(-50%, -100%)'
-          }}
+          }}  
         >
           <div className="font-medium text-sm mb-1.5">{hoveredEvent.event.label}</div>
           <div className="text-gray-300 text-xs flex justify-between items-center">
