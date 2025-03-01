@@ -1,98 +1,50 @@
-export default function Table(){
-    return(
-    <div id="tableHolder">
-    <table>
-    <tbody>
-        <tr>
-        <td>
-            <div className="vidMask">
-            <video width="320" height="240" autoPlay muted loop>
-                <source src="./RollBall.mp4" type="video/mp4"></source>
-                Your browser does not support the video tag.
-            </video>
-            <div className="vidText">Vid 1</div>
-            </div>
-        </td>
-        <td>
-            <div className="vidMask">
-            <video width="320" height="240" autoPlay muted loop>
-                <source src="./RollBall.mp4" type="video/mp4"></source>
-                Your browser does not support the video tag.
-            </video>
-            <div className="vidText">Vid 1</div>
-            </div>
-        </td>
-        <td>
-            <div className="vidMask">
-            <video width="320" height="240" autoPlay muted loop>
-                <source src="./RollBall.mp4" type="video/mp4"></source>
-                Your browser does not support the video tag.
-            </video>
-            <div className="vidText">Vid 1</div>
-            </div>
-        </td>
-        </tr>
-        <tr>
-        <td>
-            <div className="vidMask">
-            <video width="320" height="240" autoPlay muted loop>
-                <source src="./RollBall.mp4" type="video/mp4"></source>
-                Your browser does not support the video tag.
-            </video>
-            <div className="vidText">Vid 1</div>
-            </div>
-        </td>
-        <td>
-            <div className="vidMask">
-            <video width="320" height="240" autoPlay muted loop>
-                <source src="./RollBall.mp4" type="video/mp4"></source>
-                Your browser does not support the video tag.
-            </video>
-            <div className="vidText">Vid 1</div>
-            </div>
-        </td>
-        <td>
-            <div className="vidMask">
-            <video width="320" height="240" autoPlay muted loop>
-                <source src="./RollBall.mp4" type="video/mp4"></source>
-                Your browser does not support the video tag.
-            </video>
-            <div className="vidText">Vid 1</div>
-            </div>
-        </td>
-        </tr>
+const videos = [
+    { id: 0, location: "Location 1", threats: "Harassment", src: "assault.mp4" },
+    { id: 1, location: "Location 2", threats: "Assault", src: "slap.mp4" },
+    { id: 2, location: "Location 3", threats: "Battery", src: "RollBall.mp4" },
+    { id: 3, location: "Location 4", threats: "Harassment", src: "RollBall.mp4" },
+    { id: 4, location: "Location 5", threats: "Assault", src: "RollBall.mp4" },
+    { id: 5, location: "Location 6", threats: "Battery", src: "RollBall.mp4" },
+  ];
+  
+  
+export default function Table({ setFocusedVideo, setSidebarActive }) {
+    // Number of videos per row
+    const videosPerRow = 3;
 
-        {/* <tr>
-        <td>
-            <div className="vidMask">
-            <video width="320" height="240" autoPlay muted loop>
-                <source src="./RollBall.mp4" type="video/mp4"></source>
-                Your browser does not support the video tag.
-            </video>
-            <div className="vidText">Vid 1</div>
-            </div>
-        </td>
-        <td>
-            <div className="vidMask">
-            <video width="320" height="240" autoPlay muted loop>
-                <source src="./RollBall.mp4" type="video/mp4"></source>
-                Your browser does not support the video tag.
-            </video>
-            <div className="vidText">Vid 1</div>
-            </div>
-        </td>
-        <td>
-            <div className="vidMask">
-            <video width="320" height="240" autoPlay muted loop>
-                <source src="./RollBall.mp4" type="video/mp4"></source>
-                Your browser does not support the video tag.
-            </video>
-            <div className="vidText">Vid 1</div>
-            </div>
-        </td>
-        </tr> */}
-        </tbody>
+    return (
+        <div id="tableHolder">
+        <table>
+            <tbody>
+            {Array.from({ length: Math.ceil(videos.length / videosPerRow) }, (_, rowIndex) => (
+                <tr key={rowIndex}>
+                {videos
+                    .slice(rowIndex * videosPerRow, rowIndex * videosPerRow + videosPerRow)
+                    .map((video) => (
+                    <td key={video.id}>
+                        <div className="vidMask">
+                        <video
+                            width="320"
+                            height="180"
+                            autoPlay
+                            muted
+                            loop
+                            onClick={(e) => {
+                                setFocusedVideo(video);
+                                setSidebarActive(true);
+                              }}
+                        >
+                            <source src={video.src} type="video/mp4" />
+                            Your browser does not support the video tag.
+                        </video>
+                        <div className="vidText">{video.location}</div>
+                        </div>
+                    </td>
+                    ))}
+                </tr>
+            ))}
+            </tbody>
         </table>
-    </div>
-    )
+        </div>
+    );
 }

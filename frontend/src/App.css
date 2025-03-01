@@ -41,7 +41,11 @@
 
 .container {
   text-align: center;
-  font-family: Arial, sans-serif;
+  font-family: "Open Sans", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
   padding: 20px;
 }
 
@@ -93,18 +97,57 @@ td {
 #tableHolder{
   float: left;
   margin-left: 50px;
-  margin-right: 50px;
   border: 5px solid rgb(7, 7, 13);
   border-radius: 2px;
   background-color: #120e1a;
   box-shadow: 0 19px 51px 0 rgba(0,0,0,0.16), 0 14px 19px 0 rgba(0,0,0,0.07);
 }
 
-.body{
+.bodyContainer{
   display: flex;
   flex-direction: row;
 }
 
-.sidebar{
-  max-width: 500px
+#sidebar{
+  float: right;
+  margin-left: 20px;
+  margin-right: 50px;
+  width: 250px;
+  border: 5px solid rgb(7, 7, 13);
+  border-radius: 2px;
+  background-color: #120e1a;
+  box-shadow: 0 19px 51px 0 rgba(0,0,0,0.16), 0 14px 19px 0 rgba(0,0,0,0.07);
+}
+
+#sidebarContent{
+  color: white;
+}
+
+.button {
+  background-color: #06004d; /* Green */
+  border: rgb(146, 146, 146) solid 1px;
+  width: 150px;
+  color: white;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+  background-color: #00288c;
+  transform: scale(1.05);
+}
+
+.button:active {
+  background-color: #000142;
+  transform: scale(0.98);
+}
+
+.sidebarText{
+  font-size: 30px;
 }
