@@ -52,6 +52,7 @@
   cursor: pointer;
 }
 
+
 td {
   border-style: hidden;
   padding: 20px;
@@ -71,16 +72,39 @@ td {
 .vidText{
   border-bottom-right-radius: 10px;
   border-bottom-left-radius: 10px;
-  border: 1px black solid;
+  border: 1px rgb(125, 125, 131) solid;
   border-top: none;
   margin-top: 0;
   padding: 20px;
+  color: white;
+  background-color: #464548;
+  text-shadow:
+      /* White glow */
+      0 0 21px #fff,
+      /* Green glow */
+      0 0 42px rgb(13, 255, 0),
+      0 0 82px rgb(13, 255, 0),
+      0 0 92px rgb(13, 255, 0),
+      0 0 102px rgb(13, 255, 0),
+      0 0 151px rgb(13, 255, 0);
+  font-size: 25px;
 }
 
 #tableHolder{
-  display: inline-block;
-  border: 5px solid rgb(23, 23, 29);
+  float: left;
+  margin-left: 50px;
+  margin-right: 50px;
+  border: 5px solid rgb(7, 7, 13);
   border-radius: 2px;
-  background-color: #2b223d;
+  background-color: #120e1a;
   box-shadow: 0 19px 51px 0 rgba(0,0,0,0.16), 0 14px 19px 0 rgba(0,0,0,0.07);
+}
+
+.body{
+  display: flex;
+  flex-direction: row;
+}
+
+.sidebar{
+  max-width: 500px
 }
