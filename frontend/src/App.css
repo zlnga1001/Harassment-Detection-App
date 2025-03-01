@@ -114,7 +114,7 @@ td {
   margin-right: 50px;
   width: 250px;
   border: 5px solid rgb(7, 7, 13);
-  border-radius: 2px;
+  border-radius: 10px;
   background-color: #120e1a;
   box-shadow: 0 19px 51px 0 rgba(0,0,0,0.16), 0 14px 19px 0 rgba(0,0,0,0.07);
 }

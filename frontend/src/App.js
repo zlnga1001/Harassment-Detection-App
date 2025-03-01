@@ -8,7 +8,7 @@ function App() {
   const [sidebarActive, setSidebarActive] = useState(false);
   return (
     <div className="container">
-      <h1>Title</h1>
+      <h1>EyeGuard</h1>
       <div className="bodyContainer">
         <Table setFocusedVideo={setFocusedVideo} setSidebarActive={setSidebarActive} />
         <Sidebar videoData={focusedVideo} sidebarActive={sidebarActive} setSidebarActive={setSidebarActive}/>
