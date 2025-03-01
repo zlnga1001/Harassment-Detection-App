@@ -1,0 +1,153 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* non-default things */
+
+.container {
+  text-align: center;
+  font-family: "Open Sans", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  padding: 20px;
+}
+
+.button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+
+td {
+  border-style: hidden;
+  padding: 20px;
+  text-align: center;
+}
+
+.vidMask {
+  display: flex;
+  flex-direction: column;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 19px 51px 0 rgba(0,0,0,0.16), 0 14px 19px 0 rgba(0,0,0,0.07);
+  padding: none;
+}
+
+.vidText{
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border: 1px rgb(125, 125, 131) solid;
+  border-top: none;
+  margin-top: 0;
+  padding: 20px;
+  color: white;
+  background-color: #464548;
+  text-shadow:
+      /* White glow */
+      0 0 21px #fff,
+      /* Green glow */
+      0 0 42px rgb(13, 255, 0),
+      0 0 82px rgb(13, 255, 0),
+      0 0 92px rgb(13, 255, 0),
+      0 0 102px rgb(13, 255, 0),
+      0 0 151px rgb(13, 255, 0);
+  font-size: 25px;
+}
+
+#tableHolder{
+  float: left;
+  margin-left: 50px;
+  border: 5px solid rgb(7, 7, 13);
+  border-radius: 2px;
+  background-color: #120e1a;
+  box-shadow: 0 19px 51px 0 rgba(0,0,0,0.16), 0 14px 19px 0 rgba(0,0,0,0.07);
+}
+
+.bodyContainer{
+  display: flex;
+  flex-direction: row;
+}
+
+#sidebar{
+  float: right;
+  margin-left: 20px;
+  margin-right: 50px;
+  width: 250px;
+  border: 5px solid rgb(7, 7, 13);
+  border-radius: 10px;
+  background-color: #120e1a;
+  box-shadow: 0 19px 51px 0 rgba(0,0,0,0.16), 0 14px 19px 0 rgba(0,0,0,0.07);
+}
+
+#sidebarContent{
+  color: white;
+}
+
+.button {
+  background-color: #06004d; /* Green */
+  border: rgb(146, 146, 146) solid 1px;
+  width: 150px;
+  color: white;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+  background-color: #00288c;
+  transform: scale(1.05);
+}
+
+.button:active {
+  background-color: #000142;
+  transform: scale(0.98);
+}
+
+.sidebarText{
+  font-size: 30px;
+}
