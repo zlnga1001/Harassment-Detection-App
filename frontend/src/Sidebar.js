@@ -41,7 +41,7 @@ export default function Sidebar({ videoData, sidebarActive, setSidebarActive, se
 }
 
 async function sendTelegramMessage(msg) {
-    await fetch("http://localhost:5000/send-telegram", {
+    await fetch("http://localhost:5400/send-telegram", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ message: msg }),
