@@ -66,11 +66,12 @@ td {
 .vidMask {
   display: flex;
   flex-direction: column;
+  border: 3px solid transparent; 
+  transition: border 0.3s ease-in-out;
   border-radius: 10px;
   overflow: hidden;
   text-align: center;
   box-shadow: 0 19px 51px 0 rgba(0,0,0,0.16), 0 14px 19px 0 rgba(0,0,0,0.07);
-  padding: none;
 }
 
 .vidText{

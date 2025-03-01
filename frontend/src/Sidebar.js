@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-export default function Sidebar({ videoData, sidebarActive, setSidebarActive }){
+export default function Sidebar({ videoData, sidebarActive, setSidebarActive, setSelectedVideoId }){
     
     const [buttonText, setButtonText] = useState("Report!");
     const handleReportClick = () => {
@@ -11,6 +11,11 @@ export default function Sidebar({ videoData, sidebarActive, setSidebarActive }){
             setButtonText("Report!"); // Reset button text after hiding
         }, 1000); // Adjust delay as needed
     };
+
+    const handleBackClick = () => {
+        setSidebarActive(false);
+        setSelectedVideoId(-1);
+    };
     
     return(
         <aside id="sidebar">
@@ -19,16 +24,16 @@ export default function Sidebar({ videoData, sidebarActive, setSidebarActive }){
 
             </div>
             <div id="sidebarContent" style={{ display: sidebarActive ? "block" : "none" }}>
-                <div id="sidebarHeader">Report?</div>
+                <div id="sidebarHeader" style={{ fontSize: "35px" }} >Report?</div>
                 {videoData ? (
-                    <div className="sidebarText">
+                    <div className="sidebarText" style={{ fontSize: "25px" }}>
                     <p>{videoData.threats} detected at {videoData.location} </p>
                     </div>
                 ) : (
                     <p>No video selected</p>
                 )}
                 <button className="button" onClick={handleReportClick}>{buttonText}</button>
-                <button className="button" onClick={() => setSidebarActive(false)}>Nope</button>
+                <button className="button" onClick={handleBackClick}>Nope</button>
 
             </div>
         </aside>
