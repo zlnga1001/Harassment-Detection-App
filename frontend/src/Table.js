@@ -13,14 +13,14 @@ const videos = [
 
     return (
         <div id="tableHolder">
-            <table>
+            <table style={{ width: '100%', tableLayout: 'fixed' }}>
                 <tbody>
                     {Array.from({ length: Math.ceil(videos.length / videosPerRow) }, (_, rowIndex) => (
                         <tr key={rowIndex}>
                             {videos
                                 .slice(rowIndex * videosPerRow, rowIndex * videosPerRow + videosPerRow)
                                 .map((video) => (
-                                    <td key={video.id}>
+                                    <td key={video.id} style={{ width: `${100 / videosPerRow}%` }}>
                                         <div 
                                             className="vidMask" 
                                             style={{
@@ -28,19 +28,19 @@ const videos = [
                                             }}
                                         >
                                             <video
-                                                width="320"
-                                                height="180"
-                                                autoPlay
-                                                muted
-                                                loop
-                                                style={{ objectFit: "cover", cursor: "pointer" }}
-                                                onClick={() => {
-                                                    setFocusedVideo(video);
-                                                    setSidebarActive(true);
-                                                }}
+                                            width="100%" /* Make video responsive */
+                                            height="auto" /* Maintain aspect ratio */
+                                            autoPlay
+                                            muted
+                                            loop
+                                            style={{ objectFit: "cover", cursor: "pointer", width: '100%', height: '100%' }}
+                                            onClick={() => {
+                                                setFocusedVideo(video);
+                                                setSidebarActive(true);
+                                            }}
                                             >
-                                                <source src={video.src} type="video/mp4" />
-                                                Your browser does not support the video tag.
+                                            <source src={video.src} type="video/mp4" />
+                                            Your browser does not support the video tag.
                                             </video>
                                             <div className="vidText">{video.location}</div>
                                         </div>
