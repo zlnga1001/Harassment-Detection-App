@@ -1,10 +1,12 @@
+import VideoPlayer from './VideoPlayer';
+
 const videos = [
-    { id: 0, location: "Courtyard", threats: "Harassment", src: "videos/assault.mp4" },
-    { id: 1, location: "West Hallway", threats: "Assault", src: "videos/recorded1.mp4" },
-    { id: 2, location: "Dining Hall", threats: "Battery", src: "videos/Fighting0.mp4" },
-    { id: 3, location: "Lobby", threats: "Harassment", src: "videos/Fighting1.mp4" },
-    { id: 4, location: "Meeting Room 1", threats: "Assault", src: "videos/Fighting2.mp4" },
-    { id: 5, location: "Entrance", threats: "Battery", src: "videos/Fighting3.mp4" },
+    { id: 0, location: "Courtyard", threats: "Harassment", src: "/videos/assault.mp4" },
+    { id: 1, location: "West Hallway", threats: "Assault", src: "/videos/recorded1.mp4" },
+    { id: 2, location: "Dining Hall", threats: "Battery", src: "/videos/Fighting0.mp4" },
+    { id: 3, location: "Lobby", threats: "Harassment", src: "/videos/Fighting1.mp4" },
+    { id: 4, location: "Meeting Room 1", threats: "Assault", src: "/videos/Fighting2.mp4" },
+    { id: 5, location: "Entrance", threats: "Battery", src: "/videos/Fighting3.mp4" },
   ];
   
   
@@ -27,21 +29,17 @@ const videos = [
                                                 border: selectedVideoId === video.id ? "3px solid rgb(74, 74, 254)" : "3px solid transparent"
                                             }}
                                         >
-                                            <video
-                                            width="100%" /* Make video responsive */
-                                            height="auto" /* Maintain aspect ratio */
-                                            autoPlay
-                                            muted
-                                            loop
-                                            style={{ objectFit: "cover", cursor: "pointer", width: '100%', height: '100%' }}
-                                            onClick={() => {
-                                                setFocusedVideo(video);
-                                                setSidebarActive(true);
-                                            }}
-                                            >
-                                            <source src={video.src} type="video/mp4" />
-                                            Your browser does not support the video tag.
-                                            </video>
+                                            <VideoPlayer
+                                                src={video.src}
+                                                autoPlay
+                                                muted
+                                                loop
+                                                style={{ objectFit: "cover", cursor: "pointer", width: '100%', height: '100%' }}
+                                                onClick={() => {
+                                                    setFocusedVideo(video);
+                                                    setSidebarActive(true);
+                                                }}
+                                            />
                                             <div className="vidText">{video.location}</div>
                                         </div>
                                     </td>
