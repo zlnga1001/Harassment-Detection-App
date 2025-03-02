@@ -37,36 +37,39 @@ export async function detectEvents(base64Image: string, transcript: string = '')
         };
 
         console.log('Sending image to API...', { imageSize: base64Data.length });
-        const prompt = `Analyze this frame and determine if any of these specific dangerous situations are occurring:
+        const prompt = `Analyze this frame and determine if any of the following harassment or abusive behaviors are occurring:
 
-1. Medical Emergencies:
-- Person unconscious or lying motionless
-- Person clutching chest/showing signs of heart problems
-- Seizures or convulsions
-- Difficulty breathing or choking
+1. **Physical Harassment:**
+   - Unwanted physical contact (grabbing, pushing, hitting)
+   - Aggressive body language or threatening gestures
+   - Blocking someone's movement or invading personal space aggressively
 
-2. Falls and Injuries:
-- Person falling or about to fall
-- Person on the ground after a fall
-- Signs of injury or bleeding
-- Limping or showing signs of physical trauma
+2. **Verbal and Emotional Harassment:**
+   - Yelling, shouting, or aggressive verbal confrontations
+   - Insulting, degrading, or humiliating speech
+   - Repeated unwanted attention or intimidation
 
-3. Distress Signals:
-- Person calling for help or showing distress
-- Panic attacks or severe anxiety symptoms
-- Signs of fainting or dizziness
-- Headache or unease
-- Signs of unconsciousness
+3. **Sexual Harassment:**
+   - Inappropriate physical advances (touching, groping, or forced proximity)
+   - Lewd gestures, suggestive body language, or indecent exposure
+   - Recording or taking photos of someone without consent in a sensitive context
 
-4. Violence or Threats:
-- Physical altercations
-- Threatening behavior
-- Weapons visible
+4. **Bullying and Intimidation:**
+   - Multiple individuals surrounding or cornering someone
+   - Mocking, taunting, or public shaming
+   - Intentional exclusion or coercion
 
-5. Suspicious Activities:
-- Shoplifting
-- Vandalism
-- Trespassing
+5. **Discriminatory Harassment:**
+   - Visible racial, gender-based, or disability-related aggression
+   - Hate symbols, offensive gestures, or speech targeting identity groups
+   - Threats based on race, gender, sexuality, or other protected attributes
+
+6. **Retaliatory Behavior:**
+   - Confrontations following a report or complaint
+   - Escalating aggression towards someone trying to leave or avoid conflict
+   - Intimidation aimed at silencing or punishing someone
+
+Detect any clear indicators of these behaviors and determine whether immediate intervention might be necessary.
 ${transcript ? `Consider this audio transcript from the scene: "${transcript}"
 ` : ''}
 Return a JSON object in this exact format:

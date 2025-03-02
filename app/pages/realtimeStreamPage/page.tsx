@@ -7,7 +7,6 @@ import { Progress } from "@/components/ui/progress"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import TimestampList from "@/components/timestamp-list"
-import ChatInterface from "@/components/chat-interface"
 import { Timeline } from "../../components/Timeline"
 import type { Timestamp } from "@/app/types"
 import { detectEvents, type VideoEvent } from "./actions"
@@ -379,89 +378,152 @@ export default function Page() {
   // -----------------------------
   // 5) Analyze frame via API (and send email if dangerous)
   // -----------------------------
-  const analyzeFrame = async () => {
-    if (!isRecordingRef.current) return
+  // const analyzeFrame = async () => {
+  //   if (!isRecordingRef.current) return
 
-    const currentTranscript = transcript.trim()
-    const currentPoseKeypoints = [...lastPoseKeypoints]
+  //   const currentTranscript = transcript.trim()
+  //   const currentPoseKeypoints = [...lastPoseKeypoints]
 
-    try {
-      const frame = await captureFrame()
-      if (!frame) return
+  //   try {
+  //     const frame = await captureFrame()
+  //     if (!frame) return
 
-      if (!frame.startsWith("data:image/jpeg")) {
-        console.error("Invalid frame format")
-        return
-      }
+  //     if (!frame.startsWith("data:image/jpeg")) {
+  //       console.error("Invalid frame format")
+  //       return
+  //     }
 
-      const result = await detectEvents(frame, currentTranscript)
-      if (!isRecordingRef.current) return
+  //     const result = await detectEvents(frame, currentTranscript)
+  //     if (!isRecordingRef.current) return
 
-      if (result.events && result.events.length > 0) {
-        result.events.forEach(async (event: VideoEvent) => {
-          const newTimestamp = {
-            timestamp: getElapsedTime(),
-            description: event.description,
-            isDangerous: event.isDangerous
-          }
-          setTimestamps((prev) => [...prev, newTimestamp])
+  //     if (result.events && result.events.length > 0) {
+  //       result.events.forEach(async (event: VideoEvent) => {
+  //         const newTimestamp = {
+  //           timestamp: getElapsedTime(),
+  //           description: event.description,
+  //           isDangerous: event.isDangerous
+  //         }
+  //         setTimestamps((prev) => [...prev, newTimestamp])
 
-          // For dangerous events, send an email notification
-          if (event.isDangerous) {
-            try {
-              const emailPayload = {
-                title: "Dangerous Activity Detected",
-                description: `At ${newTimestamp.timestamp}, the following dangerous activity was detected: ${event.description}`
-              }
-              const response = await fetch("/api/send-email", {
-                method: "POST",
-                headers: {
-                  "Content-Type": "application/json",
-                  Accept: "application/json"
-                },
-                body: JSON.stringify(emailPayload)
-              })
+  //         // For dangerous events, send an email notification
+  //         if (event.isDangerous) {
+  //           try {
+  //             const emailPayload = {
+  //               title: "Dangerous Activity Detected",
+  //               description: `At ${newTimestamp.timestamp}, the following dangerous activity was detected: ${event.description}`
+  //             }
+  //             const response = await fetch("/api/send-email", {
+  //               method: "POST",
+  //               headers: {
+  //                 "Content-Type": "application/json",
+  //                 Accept: "application/json"
+  //               },
+  //               body: JSON.stringify(emailPayload)
+  //             })
               
-              // Check if response is ok before trying to parse JSON
-              if (!response.ok) {
-                if (response.status === 401) {
-                  setError(
-                    "Please sign in to receive email notifications for dangerous events."
-                  )
-                } else if (response.status === 500) {
-                  setError(
-                    "Danger detected" 
-                  )
-                } else {
-                  const errorText = await response.text()
-                  console.error("Failed to send email notification:", errorText)
-                  setError(
-                    `Dangerous Action Detected!!! ${event.description}`
-                  )
-                }
-                return
-              }
+  //             // Check if response is ok before trying to parse JSON
+  //             if (!response.ok) {
+  //               if (response.status === 401) {
+  //                 setError(
+  //                   "Please sign in to receive email notifications for dangerous events."
+  //                 )
+  //               } else if (response.status === 500) {
+  //                 setError(
+  //                   "Danger detected"
+  //                 )
+  //               } else {
+  //                 const errorText = await response.text()
+  //                 console.error("Failed to send email notification:", errorText)
+  //                 setError(
+  //                   `Dangerous Action Detected!!! ${event.description}`
+  //                 )
+  //               }
+  //               return
+  //             }
               
-              // Only try to parse JSON for successful responses
-              const resData = await response.json()
-              console.log("Email notification sent successfully:", resData)
-            } catch (error) {
-              console.error("Error sending email notification:", error)
-            }
-          }
+  //             // Only try to parse JSON for successful responses
+  //             const resData = await response.json()
+  //             console.log("Email notification sent successfully:", resData)
+  //           } catch (error) {
+  //             console.error("Error sending email notification:", error)
+  //           }
+  //         }
 
 
           
-        })
+  //       })
+  //     }
+  //   } catch (error) {
+  //     console.error("Error analyzing frame:", error)
+  //     setError("Error analyzing frame. Please try again.")
+  //     if (isRecordingRef.current) {
+  //       stopRecording()
+  //     }
+  //   }
+  // }
+  
+  const analyzeFrame = async () => {
+    if (!isRecordingRef.current) return;
+  
+    try {
+      const frame = await captureFrame();
+      if (!frame) return;
+  
+      if (!frame.startsWith("data:image/jpeg")) {
+        console.error("Invalid frame format");
+        return;
+      }
+  
+      const result = await detectEvents(frame);
+      if (!isRecordingRef.current) return;
+  
+      let foundDangerous = false;
+      let dangerousDescription = "";
+  
+      if (result.events && result.events.length > 0) {
+        result.events.forEach((event: VideoEvent) => {
+          if (event.isDangerous) {
+            foundDangerous = true;
+            dangerousDescription = event.description;
+          }
+        });
+  
+        if (foundDangerous) {
+          console.log("⚠️ Dangerous Action Detected!!! ⚠️");
+          console.log(`Action: ${dangerousDescription}`);
+  
+          // Show pop-up alert
+          alert(`⚠️ Dangerous Action Detected!!!\n\n Action: ${dangerousDescription}`);
+  
+          // Optionally, store the dangerous timestamp
+          const newTimestamp = {
+            timestamp: getElapsedTime(),
+            description: `DANGEROUS: ${dangerousDescription}`,
+            isDangerous: true,
+          };
+          setTimestamps((prev) => [...prev, newTimestamp]);
+  
+          // Send Telegram Notification
+          try {
+            await fetch("http://localhost:5400/send-telegram", {
+              method: "POST",
+              headers: {
+                "Content-Type": "application/json",
+              },
+              body: JSON.stringify({
+                message: `⚠️ Dangerous Action Detected!\n\n🚨 Action: ${dangerousDescription}`,
+              }),
+            });
+          } catch (error) {
+            console.error("Failed to send Telegram message:", error);
+          }
+        }
       }
     } catch (error) {
-      console.error("Error analyzing frame:", error)
-      setError("Error analyzing frame. Please try again.")
-      if (isRecordingRef.current) {
-        stopRecording()
-      }
+      console.error("Error analyzing frame:", error);
     }
-  }
+  };
+  
 
   // -----------------------------
   // 6) Capture current video frame (for analysis)
