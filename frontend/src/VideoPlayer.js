@@ -6,24 +6,13 @@ const VideoPlayer = ({ src, width, height, autoPlay, muted, loop, onClick, style
     const canvasRef = useRef(null);
     const [boxesData, setBoxesData] = useState(null);
     const [error, setError] = useState(null);
-    const animationFrameRef = useRef(null);
-    
-    // Visualization controls
     const [showBoxes, setShowBoxes] = useState(true);
-    const [showPaths, setShowPaths] = useState(true);
-    const [showIds, setShowIds] = useState(true);
-    const [showConfidence, setShowConfidence] = useState(true);
-
     const [boxHistory, setBoxHistory] = useState({});
-    const [smoothedBoxes, setSmoothedBoxes] = useState({});
+    const animationFrameRef = useRef(null);
 
-    // Number of frames to keep in history for smoothing
-    const HISTORY_LENGTH = 15;
-    // Weight for temporal smoothing (0-1), higher means more smoothing
-    const SMOOTHING_FACTOR = 0.8;
-    // Number of frames to show in motion trail
-    const TRAIL_LENGTH = 30;
-    // Minimum confidence threshold for detection
+    // Parameters for box smoothing
+    const HISTORY_LENGTH = 30;  // Increased for smoother tracking
+    const SMOOTHING_FACTOR = 0.85;  // Increased for more stability
     const CONFIDENCE_THRESHOLD = 0.3;
 
     const smoothBoxes = useCallback((currentBoxes, trackId) => {
@@ -37,7 +26,7 @@ const VideoPlayer = ({ src, width, height, autoPlay, muted, loop, onClick, style
             let weightSum = 1 - SMOOTHING_FACTOR;
             
             history.forEach((entry, index) => {
-                const weight = SMOOTHING_FACTOR * (1 - index / history.length);
+                const weight = SMOOTHING_FACTOR * Math.exp(-index / history.length);  // Exponential decay
                 sum += entry[i] * weight;
                 weightSum += weight;
             });
@@ -55,6 +44,95 @@ const VideoPlayer = ({ src, width, height, autoPlay, muted, loop, onClick, style
             return { ...prev, [trackId]: newHistory };
         });
     }, []);
+
+    const getFrameData = useCallback((currentFrame) => {
+        if (!boxesData?.frames) return null;
+
+        // If we have data for the exact frame, use it
+        if (boxesData.frames[currentFrame]) {
+            const frameData = boxesData.frames[currentFrame];
+            if (!frameData?.boxes) return null;
+            
+            // Apply temporal smoothing to each box
+            const smoothedData = {
+                ...frameData,
+                boxes: frameData.boxes.map((box, index) => {
+                    if (!box) return null;
+                    const trackId = frameData.track_ids?.[index];
+                    if (!trackId) return box;
+                    const smoothed = smoothBoxes(box, trackId);
+                    updateBoxHistory(box, trackId);
+                    return smoothed;
+                })
+            };
+            
+            return smoothedData;
+        }
+
+        // Find the nearest frames before and after
+        const frameNumbers = Object.keys(boxesData.frames).map(Number);
+        const prevFrame = Math.max(...frameNumbers.filter(f => f <= currentFrame));
+        const nextFrame = Math.min(...frameNumbers.filter(f => f > currentFrame));
+
+        if (isFinite(prevFrame) && isFinite(nextFrame)) {
+            const progress = (currentFrame - prevFrame) / (nextFrame - prevFrame);
+            
+            // Smooth interpolation between frames
+            const frame1 = boxesData.frames[prevFrame];
+            const frame2 = boxesData.frames[nextFrame];
+            
+            if (!frame1?.boxes || !frame2?.boxes) return null;
+
+            const boxes = [];
+            const confidences = [];
+            const track_ids = [];
+
+            frame1.track_ids.forEach((id1, index1) => {
+                if (!id1) return;
+                const index2 = frame2.track_ids.indexOf(id1);
+                if (index2 === -1) return;
+
+                const box1 = frame1.boxes[index1];
+                const box2 = frame2.boxes[index2];
+                if (!box1 || !box2) return;
+
+                const conf1 = frame1.confidences?.[index1] ?? 0;
+                const conf2 = frame2.confidences?.[index2] ?? 0;
+
+                // Smooth easing function for interpolation
+                const easeProgress = 0.5 - Math.cos(progress * Math.PI) / 2;
+                
+                // Interpolate box coordinates
+                const box = box1.map((coord1, i) => {
+                    const coord2 = box2[i];
+                    return coord1 + (coord2 - coord1) * easeProgress;
+                });
+
+                boxes.push(box);
+                confidences.push(conf1 + (conf2 - conf1) * easeProgress);
+                track_ids.push(id1);
+            });
+
+            const interpolated = {
+                boxes,
+                confidences,
+                track_ids,
+                is_keyframe: false
+            };
+
+            // Apply temporal smoothing to interpolated boxes
+            interpolated.boxes = interpolated.boxes.map((box, index) => {
+                if (!box) return null;
+                const trackId = interpolated.track_ids?.[index];
+                if (!trackId) return box;
+                return smoothBoxes(box, trackId);
+            });
+
+            return interpolated;
+        }
+
+        return null;
+    }, [boxesData, smoothBoxes, updateBoxHistory]);
 
     useEffect(() => {
         // Load the corresponding JSON file for bounding boxes
@@ -85,164 +163,6 @@ const VideoPlayer = ({ src, width, height, autoPlay, muted, loop, onClick, style
         };
     }, [src]);
 
-    const interpolateBoxes = useCallback((frame1Data, frame2Data, progress) => {
-        if (!frame1Data?.boxes || !frame2Data?.boxes) return null;
-        
-        const boxes = [];
-        const confidences = [];
-        const track_ids = [];
-
-        frame1Data.track_ids.forEach((id1, index1) => {
-            const index2 = frame2Data.track_ids.indexOf(id1);
-            if (index2 !== -1) {
-                const box1 = frame1Data.boxes[index1];
-                const box2 = frame2Data.boxes[index2];
-                const conf1 = frame1Data.confidences[index1];
-                const conf2 = frame2Data.confidences[index2];
-
-                // Only include if confidence is above threshold
-                if (conf1 > CONFIDENCE_THRESHOLD || conf2 > CONFIDENCE_THRESHOLD) {
-                    // Enhanced smooth interpolation
-                    const smoothProgress = 0.5 - Math.cos(progress * Math.PI) / 2;
-                    const box = box1.map((coord1, i) => {
-                        const coord2 = box2[i];
-                        return coord1 + (coord2 - coord1) * smoothProgress;
-                    });
-
-                    // Weighted confidence based on temporal distance
-                    const confidence = conf1 + (conf2 - conf1) * smoothProgress;
-
-                    boxes.push(box);
-                    confidences.push(confidence);
-                    track_ids.push(id1);
-                }
-            }
-        });
-
-        return {
-            boxes,
-            confidences,
-            track_ids,
-            is_keyframe: false
-        };
-    }, []);
-
-    const getFrameData = useCallback((currentFrame) => {
-        if (!boxesData) return null;
-
-        // If we have data for the exact frame, use it
-        if (boxesData.frames[currentFrame]) {
-            const frameData = boxesData.frames[currentFrame];
-            
-            // Apply temporal smoothing to each box
-            const smoothedData = {
-                ...frameData,
-                boxes: frameData.boxes.map((box, index) => {
-                    const trackId = frameData.track_ids[index];
-                    const smoothed = smoothBoxes(box, trackId);
-                    updateBoxHistory(box, trackId);
-                    return smoothed;
-                })
-            };
-            
-            return smoothedData;
-        }
-
-        // Find the nearest frames before and after
-        const frameNumbers = Object.keys(boxesData.frames).map(Number);
-        const prevFrame = Math.max(...frameNumbers.filter(f => f <= currentFrame));
-        const nextFrame = Math.min(...frameNumbers.filter(f => f > currentFrame));
-
-        if (isFinite(prevFrame) && isFinite(nextFrame)) {
-            const progress = (currentFrame - prevFrame) / (nextFrame - prevFrame);
-            const interpolated = interpolateBoxes(
-                boxesData.frames[prevFrame],
-                boxesData.frames[nextFrame],
-                progress
-            );
-
-            if (interpolated) {
-                // Apply temporal smoothing to interpolated boxes
-                interpolated.boxes = interpolated.boxes.map((box, index) => {
-                    const trackId = interpolated.track_ids[index];
-                    return smoothBoxes(box, trackId);
-                });
-            }
-
-            return interpolated;
-        }
-
-        return null;
-    }, [boxesData, interpolateBoxes, smoothBoxes, updateBoxHistory]);
-
-    const drawMotionTrail = useCallback((trackId, currentFrame, ctx, canvas) => {
-        if (!boxesData?.tracks?.[trackId]) return;
-        
-        const trackData = boxesData.tracks[trackId];
-        const recentPoints = trackData
-            .filter(point => point.frame <= currentFrame && point.frame >= currentFrame - TRAIL_LENGTH)
-            .map(point => ({
-                center: point.center,
-                frame: point.frame
-            }));
-
-        if (recentPoints.length < 2) return;
-
-        const scaleX = canvas.width / boxesData.video_info.width;
-        const scaleY = canvas.height / boxesData.video_info.height;
-
-        // Draw gradient trail
-        for (let i = 1; i < recentPoints.length; i++) {
-            const [x1, y1] = recentPoints[i-1].center;
-            const [x2, y2] = recentPoints[i].center;
-            
-            // Calculate opacity based on how recent the point is
-            const opacity = 0.7 * (1 - (i / recentPoints.length));
-            
-            ctx.beginPath();
-            ctx.moveTo(x1 * scaleX, y1 * scaleY);
-            ctx.lineTo(x2 * scaleX, y2 * scaleY);
-            
-            // Create gradient for trail
-            const gradient = ctx.createLinearGradient(
-                x1 * scaleX, y1 * scaleY,
-                x2 * scaleX, y2 * scaleY
-            );
-            gradient.addColorStop(0, `rgba(0, 255, 0, ${opacity})`);
-            gradient.addColorStop(1, `rgba(0, 255, 0, ${opacity * 0.5})`);
-            
-            ctx.strokeStyle = gradient;
-            ctx.lineWidth = 3;
-            ctx.stroke();
-        }
-    }, [boxesData]);
-
-    const drawMovementPath = useCallback((trackId, currentFrame, ctx, canvas) => {
-        if (!boxesData?.tracks?.[trackId]) return;
-        
-        const trackData = boxesData.tracks[trackId];
-        const recentPoints = trackData
-            .filter(point => point.frame <= currentFrame && point.frame >= currentFrame - 30)
-            .map(point => point.center);
-
-        if (recentPoints.length < 2) return;
-
-        const scaleX = canvas.width / boxesData.video_info.width;
-        const scaleY = canvas.height / boxesData.video_info.height;
-
-        ctx.beginPath();
-        ctx.moveTo(recentPoints[0][0] * scaleX, recentPoints[0][1] * scaleY);
-        
-        for (let i = 1; i < recentPoints.length; i++) {
-            const [x, y] = recentPoints[i];
-            ctx.lineTo(x * scaleX, y * scaleY);
-        }
-
-        ctx.strokeStyle = 'rgba(255, 255, 0, 0.5)';
-        ctx.lineWidth = 2;
-        ctx.stroke();
-    }, [boxesData]);
-
     useEffect(() => {
         const video = videoRef.current;
         const canvas = canvasRef.current;
@@ -259,22 +179,16 @@ const VideoPlayer = ({ src, width, height, autoPlay, muted, loop, onClick, style
             const frameData = getFrameData(currentFrame);
         
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-        
-            // Draw motion trails if enabled
-            if (showPaths) {
-                frameData.track_ids.forEach(trackId => {
-                    drawMotionTrail(trackId, currentFrame, ctx, canvas);
-                });
-            }
+            if (!frameData?.boxes) return;
         
             frameData.boxes.forEach((box, index) => {
-                if (!showBoxes) return;
+                if (!showBoxes || !box) return;
         
                 const confidence = frameData.confidences[index];
                 if (confidence < CONFIDENCE_THRESHOLD) return;
         
                 const [x1, y1, x2, y2] = box;
-                const trackId = frameData.track_ids[index];
+                if (!isFinite(x1) || !isFinite(y1) || !isFinite(x2) || !isFinite(y2)) return;
         
                 const scaleX = canvas.width / boxesData.video_info.width;
                 const scaleY = canvas.height / boxesData.video_info.height;
@@ -284,34 +198,18 @@ const VideoPlayer = ({ src, width, height, autoPlay, muted, loop, onClick, style
                 const scaledX2 = x2 * scaleX;
                 const scaledY2 = y2 * scaleY;
         
-                // Draw semi-transparent bounding box background with FIXED opacity
-                ctx.fillStyle = `rgba(0, 255, 0, 0.3)`; // Fixed opacity
+                // Draw semi-transparent bounding box background
+                ctx.fillStyle = `rgba(0, 255, 0, 0.3)`;
                 ctx.fillRect(scaledX1, scaledY1, scaledX2 - scaledX1, scaledY2 - scaledY1);
         
-                // Reset shadow before drawing border
-                ctx.shadowBlur = 0;
-                ctx.shadowColor = 'transparent';
-        
-                // Draw a **consistent** border with fixed thickness
-                ctx.strokeStyle = 'rgb(0, 255, 0)'; // Bright green
-                ctx.lineWidth = 3; // Fixed thickness
+                // Draw border
+                ctx.strokeStyle = 'rgb(0, 255, 0)';
+                ctx.lineWidth = 3;
                 ctx.strokeRect(scaledX1, scaledY1, scaledX2 - scaledX1, scaledY2 - scaledY1);
-        
-                // Display confidence & ID labels
-                if (showIds || showConfidence) {
-                    ctx.fillStyle = 'rgb(0, 255, 0)';
-                    ctx.font = '12px Arial';
-                    let label = '';
-                    if (showIds) label += `ID:${trackId}`;
-                    if (showConfidence) label += ` ${(confidence * 100).toFixed(0)}%`;
-        
-                    ctx.fillText(label, scaledX1, scaledY1 - 5);
-                }
             });
         
             animationFrameRef.current = requestAnimationFrame(drawBoxes);
         };
-        
 
         const handlePlay = () => {
             canvas.width = video.clientWidth;
@@ -336,8 +234,11 @@ const VideoPlayer = ({ src, width, height, autoPlay, muted, loop, onClick, style
         return () => {
             video.removeEventListener('play', handlePlay);
             window.removeEventListener('resize', handleResize);
+            if (animationFrameRef.current) {
+                cancelAnimationFrame(animationFrameRef.current);
+            }
         };
-    }, [boxesData, showBoxes, showPaths, showIds, showConfidence, getFrameData, drawMotionTrail]);
+    }, [boxesData, showBoxes, getFrameData]);
 
     return (
         <div style={{ position: 'relative', ...style }}>
@@ -349,7 +250,7 @@ const VideoPlayer = ({ src, width, height, autoPlay, muted, loop, onClick, style
                 muted={muted}
                 loop={loop}
                 onClick={onClick}
-                style={{ width: '100%', height: '100%', ...style }}
+                style={{ width: '100%', height: '100%' }}
             >
                 <source src={src} type="video/mp4" />
                 Your browser does not support the video tag.
@@ -381,12 +282,6 @@ const VideoPlayer = ({ src, width, height, autoPlay, muted, loop, onClick, style
             <VideoControls
                 showBoxes={showBoxes}
                 setShowBoxes={setShowBoxes}
-                showPaths={showPaths}
-                setShowPaths={setShowPaths}
-                showIds={showIds}
-                setShowIds={setShowIds}
-                showConfidence={showConfidence}
-                setShowConfidence={setShowConfidence}
             />
         </div>
     );
