@@ -1,0 +1,188 @@
+/* App.css */
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  height: 40vmin;
+  pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .App-logo {
+    animation: App-logo-spin infinite 20s linear;
+  }
+}
+
+.App-header {
+  background-color: #282c34;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: calc(10px + 2vmin);
+  color: white;
+}
+
+.App-link {
+  color: #61dafb;
+}
+
+@keyframes App-logo-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Non-default things */
+.container {
+  text-align: center;
+  font-family: "Open Sans", serif;
+  font-optical-sizing: auto;
+  font-weight: 300;
+  font-style: normal;
+  font-variation-settings: "wdth" 100;
+  padding: 2%;
+  min-height: 100vh; /* Ensure full height */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(to right, black, #003300, black); /* Gradient background */
+  color: white; /* Ensure text is white */
+}
+
+.logo {
+  height: 25px;
+  width: 25px;
+  vertical-align: middle;
+}
+
+.button {
+  margin: 5px;
+  padding: 10px 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+td {
+  border-style: hidden;
+  padding: 20px;
+  text-align: center;
+}
+
+.vidMask {
+  display: flex;
+  flex-direction: column;
+  border: 3px solid transparent;
+  transition: border 0.3s ease-in-out;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  box-shadow: 0 19px 51px 0 rgba(0, 0, 0, 0.16), 0 14px 19px 0 rgba(0, 0, 0, 0.07);
+  width: 100%;
+  background-color: #1a1a1a; /* Dark background for video containers */
+}
+
+/* App.css */
+.vidText {
+  border-bottom-right-radius: 10px;
+  border-bottom-left-radius: 10px;
+  border: 1px solid #003300; /* Green border to match gradient */
+  border-top: none;
+  margin-top: 0;
+  padding: 20px;
+  color: white;
+  background-color: rgba(0, 51, 0, 0.8); /* Semi-transparent green background */
+  text-shadow:
+    0 0 21px #fff,
+    0 0 42px rgb(13, 255, 0),
+    0 0 82px rgb(13, 255, 0),
+    0 0 92px rgb(13, 255, 0),
+    0 0 102px rgb(13, 255, 0),
+    0 0 151px rgb(13, 255, 0);
+  font-size: 25px;
+}
+
+
+#tableHolder {
+  flex: 1;
+  width: 100%;
+  max-width: 1200px; /* Adjust as needed */
+  margin: 20px;
+  border: 5px solid #003300; /* Green border to match gradient */
+  border-radius: 2px;
+  background-color: #120e1a;
+  box-shadow: 0 19px 51px 0 rgba(0, 0, 0, 0.16), 0 14px 19px 0 rgba(0, 0, 0, 0.07);
+}
+
+.bodyContainer {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
+
+#sidebar {
+  flex: 0 0 250px;
+  margin: 20px;
+  border: 5px solid #003300; /* Green border to match gradient */
+  border-radius: 10px;
+  background-color: #120e1a;
+  box-shadow: 0 19px 51px 0 rgba(0, 0, 0, 0.16), 0 14px 19px 0 rgba(0, 0, 0, 0.07);
+}
+
+#sidebarContent {
+  color: white;
+}
+
+.button {
+  background-color: #06004d;
+  border: 1px solid #333; /* Darker border */
+  width: 150px;
+  color: white;
+  padding: 12px 24px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s, transform 0.2s;
+}
+
+.button:hover {
+  background-color: #00288c;
+  transform: scale(1.05);
+}
+
+.button:active {
+  background-color: #000142;
+  transform: scale(0.98);
+}
+
+.sidebarText {
+  font-size: 30px;
+}
+
+/* Media Queries for Responsiveness */
+@media (max-width: 768px) {
+  .bodyContainer {
+    flex-direction: column;
+  }
+
+  #sidebar {
+    width: 100%;
+    margin: 10px 0;
+  }
+
+  .vidText {
+    font-size: 20px;
+  }
+}
