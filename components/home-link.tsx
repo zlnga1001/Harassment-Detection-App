@@ -21,14 +21,14 @@ export default function HomeLink() {
       onClick={handleClick}
       className="flex items-center"
     >
-      {/* <Image
-        src="/logo.png"
+      <Image
+        src="/logoWhite.png"
         alt="Group log"
-        width={120}
-        height={40}
-        className="object-contain"
+        width={80}
+        height={30}
+        className="object-contain h-8"
         priority
-      /> */}
+      />
     </Link>
   )
 }
