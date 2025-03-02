@@ -192,15 +192,15 @@ export default function UploadPage() {
   }
 
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+    <div className="min-h-screen bg-gradient-to-b from-[#003300] to-black text-white flex items-center justify-center p-4">
       <div className="w-full max-w-4xl relative">
         <div className="relative z-10 p-8">
           <div className="space-y-8">
             <div className="text-center">
               <h1 className="text-3xl font-bold mb-2 text-white drop-shadow-[0_0_10px_rgba(255,255,255,0.7)]">
-                Video Timestamp Analyzer
+                Analyze Video
               </h1>
-              <p className="text-zinc-400">Upload a video to analyze key moments and generate timestamps</p>
+              <p className="text-zinc-400">We help to detect and provide detailed information about your case</p>
             </div>
 
             {!videoUrl && (

@@ -21,14 +21,14 @@ export default function HomeLink() {
       onClick={handleClick}
       className="flex items-center"
     >
-      <Image
-        src="/HawkWatchLogo.png"
-        alt="HawkWatch Logo"
+      {/* <Image
+        src="/logo.png"
+        alt="Group log"
         width={120}
         height={40}
         className="object-contain"
         priority
-      />
+      /> */}
     </Link>
   )
 }

@@ -430,13 +430,13 @@ export default function Page() {
                   )
                 } else if (response.status === 500) {
                   setError(
-                    "Email service not properly configured. Please contact support."
+                    "Danger detected" 
                   )
                 } else {
                   const errorText = await response.text()
                   console.error("Failed to send email notification:", errorText)
                   setError(
-                    `Failed to send email notification. Please try again later.`
+                    `Dangerous Action Detected!!! ${event.description}`
                   )
                 }
                 return
@@ -449,6 +449,9 @@ export default function Page() {
               console.error("Error sending email notification:", error)
             }
           }
+
+
+          
         })
       }
     } catch (error) {
@@ -699,7 +702,7 @@ export default function Page() {
   // Render
   // -----------------------------
   return (
-    <div className="min-h-screen bg-black text-white flex items-center justify-center p-4">
+    <div className="min-h-screen flex items-center justify-center p-4 bg-gradient-to-r from-black via-[#003300] to-black text-white">
       <div className="w-full max-w-4xl relative">
         <div className="absolute inset-0 bg-purple-900/5 blur-3xl rounded-full"></div>
         <div className="relative z-10 p-8">
@@ -760,7 +763,7 @@ export default function Page() {
                 ) : !isRecording ? (
                   <button
                     onClick={startRecording}
-                    className="flex items-center gap-2 px-4 py-2 bg-green-600 hover:bg-green-700 rounded-lg transition-colors"
+                    className="flex items-center gap-2 px-4 py-2 bg-black hover:bg-green-700 rounded-lg transition-colors"
                   >
                     <PlayCircle className="w-5 h-5" />
                     Start Analysis
@@ -878,7 +881,7 @@ export default function Page() {
             </div>
           </div>
         </div>
-        <ChatInterface timestamps={timestamps} />
+        {/* <ChatInterface timestamps={timestamps} /> */}
       </div>
     </div>
   )

@@ -28,7 +28,7 @@ const defaultUrl = process.env.VERCEL_URL
 
 export const metadata = {
 	metadataBase: new URL(defaultUrl),
-	title: "Hawkwatch",
+	title: "EyeGuard",
 	description: "Real-time workplace safety monitoring and analysis",
 };
 
@@ -44,7 +44,7 @@ export default function RootLayout({
 }>) {
 	return (
 		<html lang="en" className={geistSans.className} suppressHydrationWarning>
-			<body className="bg-background text-foreground" suppressHydrationWarning>
+			<body className="bg-background text-foreground" >
 				<NavigationEvents />
 				<ThemeProvider
 					attribute="class"
