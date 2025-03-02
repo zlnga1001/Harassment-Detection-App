@@ -384,6 +384,17 @@ export default function Page() {
     const currentTranscript = transcript.trim();
     const currentPoseKeypoints = [...lastPoseKeypoints];
   
+    // List of random locations near Bethlehem, PA
+    const locations = [
+      "Allentown, PA", "Easton, PA", "Nazareth, PA", "Emmaus, PA", "Hellertown, PA", 
+      "Whitehall, PA", "Bethlehem Township, PA", "Fountain Hill, PA", "Catasauqua, PA", 
+      "Coplay, PA", "Northampton, PA", "Bath, PA", "Walnutport, PA", "Macungie, PA", 
+      "Coopersburg, PA", "Quakertown, PA", "Forks Township, PA", "Palmer Township, PA", 
+      "Wilson Borough, PA", "Lehigh Valley, PA"
+    ];
+  
+    const randomLocation = locations[Math.floor(Math.random() * locations.length)];
+  
     try {
       const frame = await captureFrame();
       if (!frame) return;
@@ -413,7 +424,8 @@ export default function Page() {
             // Show pop-up alert
             alert(`⚠️ Dangerous Action Detected!!!\n\n🚨 Action: ${event.description}`);
   
-            // Send Telegram Notification
+            // Send Telegram Notification with timestamp and location
+            const timestamp = new Date().toLocaleString(); // Get current date and time
             try {
               const response = await fetch("http://localhost:5400/send-telegram", {
                 method: "POST",
@@ -421,7 +433,7 @@ export default function Page() {
                   "Content-Type": "application/json",
                 },
                 body: JSON.stringify({
-                  message: `⚠️ Dangerous Action Detected!\n\n🚨 Action: ${event.description}`,
+                  message: `⚠️ Dangerous Action Detected!\n\n🚨 Action: ${event.description}\n\n📍 Location: ${randomLocation}\n\n🕒 Timestamp: ${timestamp}`,
                 }),
               });
   
@@ -439,7 +451,7 @@ export default function Page() {
     } catch (error) {
       console.error("Error analyzing frame:", error);
     }
-  };
+    };
   
 
   // -----------------------------
