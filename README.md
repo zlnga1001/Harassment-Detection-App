@@ -46,7 +46,6 @@ graph TD;
 
 ### Backend
 - Next.js API Routes
-- Vercel Blob for file storage
 - Google Cloud Video Intelligence API
 - Telegram Bot API for notifications
 
