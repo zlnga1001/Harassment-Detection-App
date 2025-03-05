@@ -1,12 +1,13 @@
-# Hackathon Winner: Hack For Social Justice 
-Mar. 2025
-
-![IMG_2720](https://github.com/user-attachments/assets/8d127118-314b-4416-8fd4-a9631bf8c62b)
 
 
 # Harassment Detection App
 
 A real-time harassment detection system that leverages AI and ML technologies to identify and prevent harassment incidents through video analysis.
+
+## Hackathon Winner: Hack For Social Justice 
+Mar. 2025
+
+![IMG_2720](https://github.com/user-attachments/assets/8d127118-314b-4416-8fd4-a9631bf8c62b)
 
 ## Architecture
 
