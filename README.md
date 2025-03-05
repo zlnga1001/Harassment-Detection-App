@@ -1,6 +1,9 @@
-<<<<<<< HEAD
-# Harassment-Detection-App
-=======
+# Hackathon Winner: Hack For Social Justice 
+Mar. 2025
+
+![IMG_2720](https://github.com/user-attachments/assets/8d127118-314b-4416-8fd4-a9631bf8c62b)
+
+
 # Harassment Detection App
 
 A real-time harassment detection system that leverages AI and ML technologies to identify and prevent harassment incidents through video analysis.
@@ -118,4 +121,3 @@ Contributions are welcome! Please read our contributing guidelines before submit
 ## License
 
 This project is licensed under the MIT License - see the LICENSE file for details.
->>>>>>> master
