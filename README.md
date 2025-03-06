@@ -9,6 +9,8 @@ Mar. 2025
 
 ![IMG_2720](https://github.com/user-attachments/assets/8d127118-314b-4416-8fd4-a9631bf8c62b)
 
+(Pictured: the winners!!!!)
+
 ## Architecture
 
 ```mermaid
